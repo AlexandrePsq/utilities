@@ -7,9 +7,10 @@ if root not in sys.path:
 
 import argparse
 import warnings
-warning.simplefilter(action='ignore')
+warnings.simplefilter(action='ignore')
 
-from tokenizer import tokenizerimport torch
+from tokenizer import tokenize
+import torch
 import pandas as pd
 import numpy as np
 import glob
@@ -21,7 +22,7 @@ parser = argparse.ArgumentParser(description="Create the onsets for a given toke
 parser.add_argument('--model_name', type=str, help='Name of the model to consider')
 parser.add_argument('--language', type=str, help='Language of the text being tokenized')
 parser.add_argument('--onsets', help='path to initial onsets folder')
-parser.add_argument('--onsets', help='path to the folder containing the text to tokenize and for which we need the onsets')
+parser.add_argument('--text', help='path to the folder containing the text to tokenize and for which we need the onsets')
 parser.add_argument('--save', type=str, help='path to the folder in which to save the new onsets files')
 
 args = parser.parse_args()
@@ -29,7 +30,7 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     text_files = sorted(glob.glob(os.path.join(args.text, 'text_{}_run*.txt'.format(args.language))))
-    onsets_files = sorted(glob.glob(os.path.join(args.text, 'text_{}_onsets-offsets_run*.txt'.format(args.language))))
+    onsets_files = sorted(glob.glob(os.path.join(args.onsets, 'text_{}_onsets-offsets_run*.csv'.format(args.language))))
 
     try:
         assert len(onsets_files)==len(text_files)
