@@ -81,7 +81,7 @@ if __name__ == '__main__':
             text = preprocess(text, special_words)
             tmp_text = None
             for index in range(len(ref_words)):
-                new_index = text.find(ref_words[index])
+                new_index = text.find(ref_words[index].lower())
                 tmp_text = text[: new_index]
                 text = text[new_index + len(ref_words[index]):]
                 # Extrapolating onset-offset values
