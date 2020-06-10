@@ -94,7 +94,7 @@ if __name__ == '__main__':
                 # Extrapolating onset-offset values
                 words = tokenize(tmp_text, args.language)
                 onsets = np.linspace(ref_df.offsets.iloc[max(0, index-1)], ref_df.onsets.iloc[index], len(words))
-                offsets = np.hstack(onsets[1:], np.array(ref_df.onsets.iloc[index])) if onsets.size > 0 else []
+                offsets = np.hstack([onsets[1:], np.array(ref_df.onsets.iloc[index])]) if onsets.size > 0 else []
                 result += list(zip(onsets, offsets, words))
                 result.append(((ref_df['onsets'].iloc[index], ref_df['offsets'].iloc[index], ref_df['word'].iloc[index])))
             df = pd.DataFrame(result, columns=['onsets', 'offsets', 'word'])
