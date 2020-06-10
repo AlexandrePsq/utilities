@@ -66,7 +66,10 @@ def preprocess(text, special_words, language, convert_numbers=False):
         numbers = re.findall('\d+', text)
         for number in numbers:
             text = text.replace(number, transf.number_to_words(number))
-    punctuation = ['\'', ',', ';', ':', '/', '-', '"', '‘', '’', '(', ')', '{', '}', '[', ']', '`', '“', '”', '—']
+    if language=='french':
+        punctuation = [',', ';', ':', '/', '-', '"', '‘', '’', '(', ')', '{', '}', '[', ']', '`', '“', '”', '—']
+    elif language=='english':
+        punctuation = ['\'', ',', ';', ':', '/', '-', '"', '‘', '’', '(', ')', '{', '}', '[', ']', '`', '“', '”', '—']
     eos_punctuation =  ['.', '!', '?']
     for item in punctuation:
         text = text.replace(item, ' '+ item + ' ')
@@ -79,14 +82,6 @@ def preprocess(text, special_words, language, convert_numbers=False):
         text = text.replace(item + '\n' + ' ' + '’', item + ' ' + '’' + '\n')
     text = re.sub(' +', ' ', text)
     
-    ### tokenize without punctuation ###
-    # for item in punctuation:
-    #     text = text.replace(item, ' ')
-    ### tokenize with punctuation ###
-    # ### tokenize thanks to usual tools for text without strange characters ###
-    # tokenized = sent_tokenize(text, language=language)
-    # tokenized = [word_tokenize(sentence, language=language) + ['<eos>'] for sentence in tokenized]
-    # iterator = [unk_transform(item, vocab).lower() for sublist in tokenized for item in sublist]
     return text
 
 
