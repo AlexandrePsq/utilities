@@ -68,6 +68,7 @@ def preprocess(text, special_words, language, convert_numbers=False):
             text = text.replace(number, transf.number_to_words(number))
     if language=='french':
         punctuation = [',', ';', ':', '/', '-', '"', '‘', '’', '(', ')', '{', '}', '[', ']', '`', '“', '”', '—']
+        text = text.replace('\'', '\' ')
     elif language=='english':
         punctuation = ['\'', ',', ';', ':', '/', '-', '"', '‘', '’', '(', ')', '{', '}', '[', ']', '`', '“', '”', '—']
     eos_punctuation =  ['.', '!', '?']
