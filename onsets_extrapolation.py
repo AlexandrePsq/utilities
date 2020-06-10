@@ -71,7 +71,7 @@ def preprocess(text, special_words, convert_numbers=False):
 
 if __name__ == '__main__':
     text_files = sorted(glob.glob(os.path.join(args.text, 'text_{}_run*.txt'.format(args.language))))
-    onsets_files = sorted(glob.glob(os.path.join(args.onsets, 'text_{}_onsets-offsets_run*.csv'.format(args.language))))
+    onsets_files = sorted(glob.glob(os.path.join(args.onsets, 'word_run*.csv'.format(args.language))))
     
     try:
         assert len(onsets_files)==len(text_files)
@@ -92,7 +92,7 @@ if __name__ == '__main__':
                 tmp_text = text[: new_index]
                 text = text[new_index + len(ref_words[index]):]
                 # Extrapolating onset-offset values
-                words = tokenize(tmp_text, args.language, path_like=False)
+                words = tokenize(tmp_text, args.language)
                 onsets = np.linspace(ref_df.offsets.iloc[max(0, index-1)], ref_df.onsets.iloc[index], len(words))
                 offsets = np.hstack(onsets[1:], np.array(ref_df.onsets.iloc[index])) if onsets.size > 0 else np.array(ref_df.onsets.iloc[index])
                 result += list(zip(onsets, offsets, words))
