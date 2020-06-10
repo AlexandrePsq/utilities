@@ -98,8 +98,8 @@ if __name__ == '__main__':
                 result += list(zip(onsets, offsets, words))
                 result.append(((ref_df['onsets'].iloc[index], ref_df['offsets'].iloc[index], ref_df['word'].iloc[index])))
             df = pd.DataFrame(result, columns=['onsets', 'offsets', 'word'])
-            saving_path = os.path.join(args.save, 'text_{}_{}_onsets-offsets_run{}.csv'.format(args.language, args.model_name, run + 1))
-            df.to_csv(saving_path)
+            saving_path = os.path.join(args.save, 'word+punctuation_run{}.csv'.format(run + 1))
+            df.to_csv(saving_path, index=False)
             
     except AssertionError:
         print('You do not have the same number of onsets files and text-to-tokenize files ...')
