@@ -1,10 +1,6 @@
 import os
 import sys
 
-root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if root not in sys.path:
-    sys.path.append(root)
-
 import argparse
 import warnings
 warnings.simplefilter(action='ignore')
@@ -28,6 +24,7 @@ parser.add_argument('--model_name', type=str, help='Name of the model to conside
 parser.add_argument('--language', type=str, help='Language of the text being tokenized')
 parser.add_argument('--onsets', help='path to initial onsets folder')
 parser.add_argument('--text', help='path to the folder containing the text to tokenize and for which we need the onsets')
+parser.add_argument('--convert_numbers', default=False, action='store_true', help='Boolean precising if numerical values need to be converted into alphabetical values.')
 parser.add_argument('--save', type=str, help='path to the folder in which to save the new onsets files')
 
 args = parser.parse_args()
@@ -37,20 +34,30 @@ args = parser.parse_args()
 
 ########################## PREPROCESSING ##########################
 
-special_words = {'grown-ups': 'grownups',
-                    'hasn\'t': 'hasnt',
-                    'hasn’t': 'hasnt',
-                    'grown-up':'grownup'
+special_words = {
+    'english':
+    {
+        'grown-ups': 'grownups',
+        'hasn\'t': 'hasnt',
+        'hasn’t': 'hasnt',
+        'grown-up':'grownup'
+    },
+    'french':
+    {
+
+    }
+                
 }
 
 
-def preprocess(text, special_words):
+def preprocess(text, special_words, convert_numbers=False):
     for word in special_words.keys():
         text = text.replace(word, special_words[word])
-    transf = inflect.engine()
-    numbers = re.findall('\d+', text)
-    for number in numbers:
-        text = text.replace(number, transf.number_to_words(number))
+    if convert_numbers:
+        transf = inflect.engine()
+        numbers = re.findall('\d+', text)
+        for number in numbers:
+            text = text.replace(number, transf.number_to_words(number))
     return text
 
 
@@ -78,7 +85,7 @@ if __name__ == '__main__':
             ref_df = pd.read_csv(onsets_files[run])
             ref_words = list(ref_df.word)
             text = open(text_files[run], 'r').read().lower()
-            text = preprocess(text, special_words)
+            text = preprocess(text, special_words[args.language], convert_numbers=args.convert_numbers)
             tmp_text = None
             for index in range(len(ref_words)):
                 new_index = text.find(ref_words[index].lower())
@@ -86,8 +93,8 @@ if __name__ == '__main__':
                 text = text[new_index + len(ref_words[index]):]
                 # Extrapolating onset-offset values
                 words = tokenize(tmp_text, args.language, path_like=False)
-                onsets = np.linspace(ref_df.onsets.iloc[max(0, index-1)], ref_df.onsets.iloc[index], len(words))
-                offsets = np.linspace(ref_df.offsets.iloc[max(0, index-1)], ref_df.offsets.iloc[index], len(words))
+                onsets = np.linspace(ref_df.offsets.iloc[max(0, index-1)], ref_df.onsets.iloc[index], len(words))
+                offsets = np.hstack(onsets[1:], np.array(ref_df.onsets.iloc[index])) if onsets.size > 0 else np.array(ref_df.onsets.iloc[index])
                 result += list(zip(onsets, offsets, words))
                 result.append(((ref_df['onsets'].iloc[index], ref_df['offsets'].iloc[index], ref_df['word'].iloc[index])))
             df = pd.DataFrame(result, columns=['onsets', 'offsets', 'word'])
