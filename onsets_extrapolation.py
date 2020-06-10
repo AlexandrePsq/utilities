@@ -71,7 +71,7 @@ def preprocess(text, special_words, convert_numbers=False):
 
 if __name__ == '__main__':
     text_files = sorted(glob.glob(os.path.join(args.text, 'text_{}_run*.txt'.format(args.language))))
-    onsets_files = sorted(glob.glob(os.path.join(args.onsets, 'word_run*.csv'.format(args.language))))
+    onsets_files = sorted(glob.glob(os.path.join(args.onsets, 'word_run*.csv')))
     
     try:
         assert len(onsets_files)==len(text_files)
